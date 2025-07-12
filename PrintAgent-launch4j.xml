@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>console</headerType>
+  <jar>C:\ForEaseList\EaseListPrinter\print-agent\target\print-agent-1.0.0.jar</jar>
+  <outfile>C:\ForEaseList\EaseListPrinter\print-agent\target\print-agent-1.0.0.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\ForEaseList\EaseListPrinter\print-agent\src\main\resources\icon.ico</icon>
+  <classPath>
+    <mainClass>com.example.PrintAgent</mainClass>
+  </classPath>
+  <jre>
+    <path>C:\ForEaseList\EaseListPrinter\print-agent\target\custom-jre</path>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion>21</minVersion>
+    <maxVersion></maxVersion>
+  </jre>
+</launch4jConfig>
