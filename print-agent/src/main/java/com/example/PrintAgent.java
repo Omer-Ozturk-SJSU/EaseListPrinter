@@ -32,10 +32,6 @@ public class PrintAgent {
             server[0] = HttpServer.create(new InetSocketAddress(9999), 0);
             server[0].start();
             System.out.println("HTTP server listening on port 9999");
-            String os = System.getProperty("os.name").toLowerCase();
-            if (os.contains("win") && !isStartupRegistered()) {
-                registerStartup();
-            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to start HTTP server");
@@ -297,10 +293,8 @@ public class PrintAgent {
             PopupMenu popup = new PopupMenu();
             MenuItem exitItem = new MenuItem("Exit");
             popup.add(exitItem);
-            MenuItem disableStartupItem = new MenuItem("Disable Autostart");
-            popup.add(disableStartupItem);
             // 3) Create the TrayIcon
-            TrayIcon trayIcon = new TrayIcon(image, "PrintAgent", popup);
+            TrayIcon trayIcon = new TrayIcon(image, "EasePrintAgent", popup);
             trayIcon.setImageAutoSize(true);
             // 4) Add it to the SystemTray
             SystemTray tray = SystemTray.getSystemTray();
@@ -314,9 +308,6 @@ public class PrintAgent {
                 server[0].stop(0);
                 tray.remove(trayIcon);
                 System.exit(0);
-            });
-            disableStartupItem.addActionListener(evt -> {
-                unregisterStartup();
             });
         } else {
             System.out.println("System tray not supported on this platform.");
@@ -447,60 +438,5 @@ public class PrintAgent {
         headers.add("Access-Control-Allow-Headers", "Content-Type");
         exchange.sendResponseHeaders(204, -1); // No content
         exchange.close();
-    }
-
-    // Add Windows registry startup integration
-    private static void registerStartup() {
-        try {
-            String exePath = new File(PrintAgent.class
-                    .getProtectionDomain()
-                    .getCodeSource()
-                    .getLocation()
-                    .toURI()).getAbsolutePath();
-
-            String command = String.format(
-                    "reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v PrintAgent /t REG_SZ /d \"%s\" /f",
-                    exePath);
-
-            Process process = Runtime.getRuntime().exec(command);
-            int result = process.waitFor();
-
-            if (result == 0) {
-                System.out.println("PrintAgent added to Windows startup.");
-            } else {
-                System.err.println("Failed to register startup. Exit code: " + result);
-            }
-        } catch (Exception e) {
-            System.err.println("Startup registration failed: " + e.getMessage());
-        }
-    }
-
-    private static boolean isStartupRegistered() {
-        try {
-            Process p = Runtime.getRuntime()
-                    .exec("reg query HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v PrintAgent");
-            return p.waitFor() == 0;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private static void unregisterStartup() {
-        try {
-            Process p = Runtime.getRuntime().exec(new String[] {
-                    "reg", "delete",
-                    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                    "/v", "PrintAgent",
-                    "/f"
-            });
-            int result = p.waitFor();
-            if (result == 0) {
-                System.out.println("Autostart disabled via tray.");
-            } else {
-                System.err.println("Failed to remove PrintAgent from startup.");
-            }
-        } catch (Exception e) {
-            System.err.println("Exception while removing autostart: " + e.getMessage());
-        }
     }
 }
